@@ -1,0 +1,5 @@
+A.Use Case Diagram (Sơ đồ ca sử dụng)
+B.Class Diagram (Sơ đồ lớp)
+C.Activity Diagram (Sơ đồ hoạt động)
+D.Deployment Diagram (Sơ đồ triển khai)
+E.Sequence Diagram (Sơ đồ tuần tự)
