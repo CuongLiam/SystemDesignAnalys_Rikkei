@@ -1,0 +1,13 @@
++----------------+
+|     Book       |
++----------------+
+| bookId: int    |
+| title: string  |
+| author: string |
+| price: double  |
+| quantity: int  |
++----------------+
+| getInfo(): string          |
+| updateStock(amount: int): void |
+| applyDiscount(percent: double): void |
++----------------+
