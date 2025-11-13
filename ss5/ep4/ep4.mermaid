@@ -1,0 +1,30 @@
+sequenceDiagram
+    actor User
+    participant ui as :GiaoDienUngDung
+    participant cart as :GioHang
+
+    activate User
+    
+    %% Đây là khối LOOP để biểu thị việc lặp lại hành động %%
+    loop [Cho mỗi sản phẩm người dùng muốn thêm]
+        
+        activate ui
+        %% 1. Người dùng chọn một sản phẩm để thêm %%
+        User->>ui: 1. chonThemSanPham(sanPhamID)
+        
+        activate cart
+        %% 2. Giao diện gửi yêu cầu thêm sản phẩm đó vào giỏ hàng %%
+        ui->>cart: 2. themSanPhamVaoGio(sanPhamID)
+        
+        %% 3. Giỏ hàng xử lý và xác nhận %%
+        cart-->>ui: 3. traVeXacNhan(true)
+        deactivate cart
+        
+        %% 4. Giao diện cập nhật thông tin cho người dùng (ví dụ: số lượng item trong giỏ) %%
+        ui-->>User: 4. capNhatSoLuongGioHang()
+        deactivate ui
+
+    end
+    %% Kết thúc khối loop %%
+    
+    deactivate User

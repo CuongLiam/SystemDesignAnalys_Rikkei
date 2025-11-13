@@ -1,0 +1,57 @@
+sequenceDiagram
+    actor User
+    participant ui as :TrangThanhToan
+    participant system as :HeThong
+    participant vnpay as :CongThanhToanVNPay
+    participant order as :HeThongDonHang
+
+    activate User
+    %% 1. Người dùng xác nhận thanh toán với một phương thức đã chọn %%
+    User->>ui: 1. xacNhanThanhToan(phuongThuc)
+    
+    activate ui
+    %% 2. Giao diện gửi yêu cầu xử lý lên hệ thống %%
+    ui->>system: 2. xuLyDonHang(donHangID, phuongThuc)
+    activate system
+
+    %% Đây là khối ALT (Alternative) để thể hiện logic rẽ nhánh %%
+    alt [phuongThuc == "VNPay"]
+        
+        %% --- NHÁNH 1: Nếu chọn VNPay --- %%
+        activate vnpay
+        %% 3a. Hệ thống gọi qua cổng VNPay để tạo link thanh toán %%
+        system->>vnpay: 3a. taoYeuCauThanhToan(donHangInfo)
+        
+        %% 4a. VNPay trả về link để redirect %%
+        vnpay-->>system: 4a. traVeLinkRedirect(paymentURL)
+        deactivate vnpay
+        
+        %% 5a. Hệ thống trả link về cho giao diện %%
+        system-->>ui: 5a. yeuCauChuyenHuong(paymentURL)
+        
+        %% 6a. Giao diện thực hiện redirect trình duyệt của người dùng %%
+        ui-->>User: 6a. ChuyenHuongDenVNPay(paymentURL)
+
+    else [phuongThuc == "COD"]
+
+        %% --- NHÁNH 2: Nếu chọn COD --- %%
+        activate order
+        %% 3b. Hệ thống gọi qua dịch vụ đơn hàng để xác nhận %%
+        system->>order: 3b. xacNhanDonHangCOD(donHangID)
+        
+        %% 4b. Dịch vụ đơn hàng xác nhận thành công %%
+        order-->>system: 4b. traVeXacNhan(true)
+        deactivate order
+        
+        %% 5b. Hệ thống trả kết quả thành công về giao diện %%
+        system-->>ui: 5b. thongBaoDonHangThanhCong()
+        
+        %% 6b. Giao diện hiển thị trang cảm ơn/xác nhận đơn hàng %%
+        ui-->>User: 6b. hienThiTrangCamOn()
+
+    end
+    %% Kết thúc khối ALT %%
+
+    deactivate ui
+    deactivate system
+    deactivate User

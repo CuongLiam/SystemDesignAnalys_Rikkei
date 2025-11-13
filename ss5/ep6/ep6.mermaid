@@ -1,0 +1,23 @@
+stateDiagram-v2
+    %% [*] là điểm bắt đầu, chỉ đến trạng thái đầu tiên %%
+    [*] --> MoiTao
+    
+    %% Định nghĩa các trạng thái %%
+    MoiTao: Mới tạo
+    HoatDong: Hoạt động
+    BiKhoa: Bị khóa
+    
+    %% Định nghĩa các chuyển trạng thái %%
+    
+    %% 1. Mới tạo -> Hoạt động %%
+    MoiTao --> HoatDong : [Người dùng xác thực / Đăng nhập lần đầu]
+    
+    %% 2. Hoạt động -> Bị khóa %%
+    HoatDong --> BiKhoa : [Vi phạm quy định / Quản trị viên khóa]
+    
+    %% 3. Bị khóa -> Kích hoạt lại (trở về Hoạt động) %%
+    BiKhoa --> HoatDong : [Được kích hoạt lại / Kháng cáo thành công]
+
+    %% Các luồng khác (ví dụ: người dùng tự xóa tài khoản) %%
+    HoatDong --> [*] : [Người dùng xóa tài khoản]
+    BiKhoa --> [*] : [Xóa vĩnh viễn]
