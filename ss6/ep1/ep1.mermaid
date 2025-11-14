@@ -1,0 +1,29 @@
+graph TD
+    %% Định nghĩa Actor (Tác nhân)
+    A[<img src='https://img.icons8.com/ios-glyphs/60/user-male-circle.png' width='40' /><br/>Người dùng]
+    
+    %% Định nghĩa System Boundary (Ranh giới hệ thống)
+    subgraph "Hệ thống Đặt vé Xem phim Online"
+        
+        %% Định nghĩa các Use Cases
+        UC1(Đặt chỗ)
+        UC2(Chọn ghế)
+        UC3(Thanh toán)
+        UC4(Hủy vé)
+    
+        %% Định nghĩa các mối quan hệ <<include>>
+        %% Đặt chỗ là quy trình chính, bao gồm cả việc chọn ghế và thanh toán
+        UC1 -- "<<include>>" --> UC2
+        UC1 -- "<<include>>" --> UC3
+    end
+
+    %% Định nghĩa Actor thứ cấp (Secondary Actor)
+    SPS[<img src='https://img.icons8.com/ios/50/bank.png' width='40' /><br/>Hệ thống Thanh toán]
+
+    %% Định nghĩa các mối quan hệ (Associations)
+    %% Người dùng có thể bắt đầu 2 quy trình chính: Đặt chỗ và Hủy vé
+    A --- UC1
+    A --- UC4
+    
+    %% Use case "Thanh toán" sẽ tương tác với "Hệ thống Thanh toán"
+    UC3 --- SPS

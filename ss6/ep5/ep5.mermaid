@@ -1,0 +1,30 @@
+classDiagram
+    %% Định nghĩa 3 lớp chính
+    class SinhVien {
+        +string maSV
+        +string tenSV
+        +thamGiaLop(LopHoc)
+    }
+    
+    class LopHoc {
+        +string maLop
+        +string tenLop
+        +themSinhVien(SinhVien)
+    }
+    
+    class MonHoc {
+        +string maMH
+        +string tenMH
+    }
+    
+    %% Định nghĩa các mối quan hệ
+    
+    %% Mối quan hệ 1: SinhVien <-> LopHoc
+    %% "Sinh viên có thể tham gia nhiều Lớp học" (SinhVien -- *)
+    %% "Lớp học có thể chứa nhiều Sinh viên" (LopHoc -- *)
+    SinhVien "*" -- "*" LopHoc : tham gia
+    
+    %% Mối quan hệ 2: LopHoc <-> MonHoc
+    %% "Lớp học có thể có nhiều Môn học" (LopHoc -- *)
+    %% "Môn học có thể được giảng dạy trong nhiều Lớp học" (MonHoc -- *)
+    LopHoc "*" -- "*" MonHoc : giảng dạy

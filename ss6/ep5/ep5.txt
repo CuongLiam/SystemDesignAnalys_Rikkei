@@ -1,0 +1,26 @@
+📝 Giải thích chi tiết về Multiplicity (Bản số)
+Sơ đồ này thể hiện hai mối quan hệ chính:
+
+1. Quan hệ giữa SinhVien và LopHoc
+Loại quan hệ: Nhiều-Nhiều (Many-to-Many).
+
+Bản số (Multiplicity): * -- * (đọc là "nhiều-nhiều").
+
+Diễn giải:
+
+SinhVien "*" -- LopHoc: Một SinhVien có thể tham gia 0 hoặc nhiều (*) LopHoc. (Đúng theo yêu cầu "Sinh viên có thể tham gia nhiều Lớp học").
+
+SinhVien -- "*" LopHoc: Một LopHoc có thể chứa 0 hoặc nhiều (*) SinhVien. (Đúng theo yêu cầu "Lớp học có thể chứa nhiều Sinh viên").
+
+2. Quan hệ giữa LopHoc và MonHoc
+Loại quan hệ: Nhiều-Nhiều (Many-to-Many).
+
+Bản số (Multiplicity): * -- * (đọc là "nhiều-nhiều").
+
+Diễn giải:
+
+LopHoc "*" -- MonHoc: Một LopHoc có thể giảng dạy 0 hoặc nhiều (*) MonHoc. (Đúng theo yêu cầu "Lớp học có thể có nhiều Môn học").
+
+LopHoc -- "*" MonHoc: Một MonHoc có thể được giảng dạy trong 0 hoặc nhiều (*) LopHoc. (Đúng theo yêu cầu "Môn học có thể được giảng dạy trong nhiều Lớp học").
+
+Lưu ý thực tế: Trong các thiết kế cơ sở dữ liệu sau này, cả hai mối quan hệ nhiều-nhiều này (SinhVien-LopHoc và LopHoc-MonHoc) sẽ cần được "bẻ gãy" bằng cách sử dụng một bảng trung gian (còn gọi là Association Class). Ví dụ, một bảng BangDiem (hoặc DangKyLop) sẽ được tạo ra để kết nối SinhVien và LopHoc.

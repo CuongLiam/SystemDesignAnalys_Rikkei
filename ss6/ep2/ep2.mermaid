@@ -1,0 +1,97 @@
+classDiagram
+    %% Định nghĩa các Lớp (Classes)
+    class KhachHang {
+        +string maKH
+        +string ten
+        +string email
+        +string matKhau
+        +string diaChi
+        +dangKy()
+        +dangNhap()
+        +timKiemSanPham()
+        +datHang()
+        +thanhToan()
+        +guiLienHe()
+    }
+
+    class SanPham {
+        +string maSP
+        +string tenSP
+        +string moTa
+        +double gia
+        +int soLuongTon
+        +hienThiChiTiet()
+    }
+
+    class DanhMuc {
+        +string maDanhMuc
+        +string tenDanhMuc
+        +lietKeSanPham()
+    }
+
+    class GioHang {
+        +string maGioHang
+        +List~Item~ items
+        +double tongTien
+        +themSanPham(sanPham, soLuong)
+        +xoaSanPham(sanPham)
+        +capNhatSoLuong(sanPham, soLuong)
+        +tinhTongTien()
+    }
+
+    class DonHang {
+        +string maDonHang
+        +date ngayDat
+        +string trangThai
+        +double tongTien
+        +taoDonHang()
+        +capNhatTrangThai()
+    }
+
+    class ChiTietDonHang {
+        %% Đã xóa stereotype <<Association Class>> vì không còn dùng cú pháp đó
+        +int soLuong
+        +double donGia
+        +tinhThanhTien()
+    }
+
+    class ThanhToan {
+        +string maThanhToan
+        +string phuongThuc
+        +date ngayThanhToan
+        +string trangThai
+        +xuLyThanhToan()
+    }
+
+    class LienHe {
+        +string maLienHe
+        +string tieuDe
+        +string noiDung
+        +date ngayGui
+        +luuTinNhan()
+    }
+
+    %% Định nghĩa các Mối quan hệ (Relationships)
+    
+    %% KhachHang và các Use Cases
+    KhachHang "1" -- "1" GioHang : sở hữu
+    KhachHang "1" -- "*" DonHang : đặt
+    KhachHang "1" -- "*" LienHe : gửi
+
+    %% Xem San Pham
+    DanhMuc "1" -- "*" SanPham : chứa
+    
+    %% Dat Hang
+    GioHang "1" -- "*" SanPham : chứa (dạng M-M)
+    
+    %% ---- PHẦN ĐÃ SỬA LẦN 2 ----
+    %% Đã xóa bỏ hoàn toàn dòng (DonHang, SanPham) .. ChiTietDonHang
+    
+    %% Giữ lại 2 dòng mô tả tường minh cho mối quan hệ M-M
+    %% 1 Đơn hàng có NHIỀU Chi tiết đơn hàng
+    DonHang "1" -- "*" ChiTietDonHang
+    %% 1 Sản phẩm có thể nằm trong NHIỀU Chi tiết đơn hàng
+    SanPham "1" -- "*" ChiTietDonHang
+
+    %% Thanh Toan
+    DonHang "1" -- "1" ThanhToan : có

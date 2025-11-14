@@ -1,0 +1,30 @@
+graph TD
+    %% Actors
+    ActorDocGia[<img src='https://img.icons8.com/ios-glyphs/60/user-male-circle.png' width='40' /><br/>Độc Giả]
+    ActorThuThu[<img src='https://img.icons8.com/ios-filled/50/administrator-male.png' width='40' /><br/>Thủ Thư]
+
+    %% System Boundary
+    subgraph "Hệ thống Quản lý Thư viện"
+        UC1(Đăng ký tài khoản)
+        UC2(Đăng nhập)
+        UC3(Tìm kiếm sách)
+        UC4(Mượn sách)
+        UC5(Trả sách)
+        UC6(Quản lý sách)
+        
+        %% Relationships
+        UC4 -- "<<include>>" --> UC2
+        UC5 -- "<<include>>" --> UC2
+        UC6 -- "<<include>>" --> UC2
+    end
+
+    %% Actor Associations
+    ActorDocGia --- UC1
+    ActorDocGia --- UC2
+    ActorDocGia --- UC3
+    ActorDocGia --- UC4
+    ActorDocGia --- UC5
+    
+    ActorThuThu --- UC2
+    ActorThuThu --- UC6
+    ActorThuThu --- UC3

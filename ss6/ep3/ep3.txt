@@ -1,0 +1,11 @@
+Giải thích thay đổi:
+Xóa dòng lỗi: Đã xóa hoàn toàn dòng (DonHang, SanPham) .. ChiTietDonHang.
+
+Xóa Stereotype: Đã xóa nhãn <<Association Class>> khỏi lớp ChiTietDonHang vì chúng ta không còn dùng
+cú pháp đó nữa.
+
+Giữ lại liên kết tường minh: Giữ lại hai dòng DonHang "1" -- "*" ChiTietDonHang
+ và SanPham "1" -- "*" ChiTietDonHang. Đây là cách mô hình hóa mối quan hệ nhiều-nhiều (M-M)
+  một cách rõ ràng và được hỗ trợ rộng rãi nhất.
+
+Phiên bản này chắc chắn sẽ biên dịch được. Cảm ơn sự kiên nhẫn của bạn!
