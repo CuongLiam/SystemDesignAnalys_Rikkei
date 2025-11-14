@@ -1,0 +1,29 @@
+graph TD
+    direction TB
+    
+    %% Định nghĩa "package" bằng subgraph
+    subgraph "Hệ thống Đặt vé"
+        ModAccount["<b>Quản lý Tài khoản</b><br/>(Module)"]
+        ModFlight["<b>Tìm chuyến bay</b><br/>(Module)"]
+        ModBooking["<b>Đặt vé</b><br/>(Module)"]
+        ModPayment["<b>Thanh toán</b><br/>(Module)"]
+    end
+
+    %% Các mối quan hệ (Dependencies)
+    
+    %% 1. Booking cần Flight để biết đặt chuyến nào.
+    ModBooking -- "Sử dụng dữ liệu chuyến bay" --> ModFlight
+    
+    %% 2. Booking cần Account để biết ai đang đặt.
+    ModBooking -- "Lấy thông tin người dùng" --> ModAccount
+    
+    %% 3. Booking cần Payment để xử lý thanh toán.
+    ModBooking -- "Khởi tạo thanh toán" --> ModPayment
+
+    %% Các module khác cũng có thể phụ thuộc ngược lại
+    
+    %% 4. Account cần Booking để hiển thị "Lịch sử đặt vé".
+    ModAccount -- "Lấy lịch sử đặt vé" --> ModBooking
+    
+    %% 5. Payment có thể cần Account để lấy thông tin thanh toán đã lưu.
+    ModPayment -- "Lấy PTTT đã lưu" --> ModAccount

@@ -1,0 +1,45 @@
+graph TD
+    direction TB
+
+    subgraph "Người dùng (Client)"
+        UI["Frontend
+        (Web / Máy POS Bán hàng)"]
+    end
+
+    subgraph "Hệ thống Bán lẻ (Backend - Core System)"
+        Inventory["Quản lý Tồn kho
+        (Nghiệp vụ nội bộ)"]
+        PaymentSvc["Dịch vụ Thanh toán
+        (Logic tích hợp)"]
+        EmailSvc["Dịch vụ Email
+        (Logic tích hợp)"]
+    end
+
+    subgraph "Cơ sở dữ liệu (Internal)"
+        DB[("Database
+        (Sản phẩm, Tồn kho, Đơn hàng)")]
+    end
+
+    subgraph "Dịch vụ Bên ngoài (External Services)"
+        VNPay["VNPay Gateway
+        (API Thanh toán)"]
+        SMTP["SMTP Service
+        (SendGrid, Mailgun)"]
+    end
+
+    %% Luồng 1: Nghiệp vụ nội bộ (Quản lý tồn kho)
+    UI -- "Quản lý sản phẩm" --> Inventory
+    Inventory -- "Đọc/Ghi dữ liệu tồn kho" --> DB
+
+    %% Luồng 2: Nghiệp vụ tích hợp (Thanh toán & Gửi mail)
+    UI -- "1. Yêu cầu thanh toán" --> PaymentSvc
+    PaymentSvc -- "2. Gọi API Thanh toán" --> VNPay
+    
+    %% VNPay sẽ gọi ngược lại (callback) để xác nhận
+    VNPay -- "3. Callback (IPN)" --> PaymentSvc
+    
+    %% Sau khi xác nhận, Backend thực hiện 2 việc
+    PaymentSvc -- "4a. Ghi nhận đơn hàng" --> DB
+    PaymentSvc -- "4b. Yêu cầu gửi mail" --> EmailSvc
+    
+    EmailSvc -- "5. Gửi qua SMTP" --> SMTP

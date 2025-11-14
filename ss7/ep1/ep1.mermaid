@@ -1,0 +1,37 @@
+graph TD
+    subgraph "Frontend (Clients)"
+        direction TB
+        Web["Web Application<br/>React, Vue, Angular"]
+        Mobile["Mobile Application<br/>React Native, Flutter"]
+    end
+
+    subgraph "Backend (Server-side)"
+        direction TB
+        API["<b>API Gateway</b><br/>Cổng giao tiếp"]
+        Auth["<b>Authentication Service</b><br/>Xác thực, Phân quyền"]
+        Logic["<b>Business Logic Services</b><br/>Xử lý nghiệp vụ: Đơn hàng, Giỏ hàng..."]
+        
+        API --> Auth
+        API --> Logic
+    end
+
+    subgraph "Data Storage"
+        DB["<b>Database</b><br/>PostgreSQL, MySQL, MongoDB"]
+    end
+
+    subgraph "External Services (Third-party)"
+        Payment["Payment Gateway<br/>VNPay, MoMo"]
+        Shipping["Logistics Service<br/>GHN, Viettel Post"]
+        Email["Notification Service<br/>Email, SMS"]
+    end
+
+    %% Mối quan hệ
+    Web -- "Yêu cầu HTTP/S (REST/GraphQL API)" --> API
+    Mobile -- "Yêu cầu HTTP/S (REST/GraphQL API)" --> API
+
+    Logic -- "Đọc/Ghi dữ liệu" --> DB
+    Auth -- "Đọc/Ghi dữ liệu" --> DB
+
+    Logic -- "Gọi API bên thứ 3" --> Payment
+    Logic -- "Gọi API bên thứ 3" --> Shipping
+    Logic -- "Gọi API bên thứ 3" --> Email

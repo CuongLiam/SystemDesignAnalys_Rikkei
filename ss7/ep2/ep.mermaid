@@ -1,0 +1,49 @@
+graph TD
+    direction TB
+    
+    subgraph "1. Presentation Tier (Tầng Giao diện)"
+        UI["Web Application UI
+        Trang Quản lý Sản phẩm
+        Trang Nhập/Xuất kho"]
+    end
+
+    subgraph "2. Business Logic Tier (Tầng Nghiệp vụ)"
+        direction TB
+        subgraph "Services (Logic)"
+            direction TB
+            ProductSvc["Product Service"]
+            SupplierSvc["Supplier Service"]
+            InventorySvc["Inventory Service"]
+        end
+    end
+    
+    subgraph "3. Data Access Tier (Tầng Truy cập Dữ liệu)"
+        direction TB
+        subgraph "Repositories (Dữ liệu)"
+            direction TB
+            ProductRepo["Product Repository"]
+            SupplierRepo["Supplier Repository"]
+            InventoryRepo["Inventory Repository"]
+        end
+    end
+    
+    subgraph "Database"
+         DB[("Warehouse DB
+         MySQL / PostgreSQL")]
+    end
+
+    %% Dependencies (Luồng phụ thuộc)
+    UI -- "Gửi Yêu cầu" --> ProductSvc
+    UI -- "Gửi Yêu cầu" --> SupplierSvc
+    UI -- "Gửi Yêu cầu" --> InventorySvc
+
+    ProductSvc -- "Sử dụng" --> ProductRepo
+    SupplierSvc -- "Sử dụng" --> SupplierRepo
+    InventorySvc -- "Sử dụng" --> InventoryRepo
+    
+    %% Business Logic Tier có thể phối hợp các Repository
+    InventorySvc -- "Cập nhật tồn kho" --> ProductRepo
+
+    ProductRepo -- "SQL Query" --> DB
+    SupplierRepo -- "SQL Query" --> DB
+    InventoryRepo -- "SQL Query" --> DB

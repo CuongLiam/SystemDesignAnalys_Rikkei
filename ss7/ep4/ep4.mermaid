@@ -1,0 +1,32 @@
+classDiagram
+    direction TB
+    
+    class OrderService {
+        <<Business Layer>>
+        -OrderRepository repository
+        +placeOrder(userId, cartItems) : Order
+        +cancelOrder(orderId, userId) : boolean
+        +getOrderDetails(orderId, userId) : Order
+        +getOrderHistory(userId) : List~Order~
+    }
+    
+    class OrderRepository {
+        <<Data Layer>>
+        -DatabaseConnection db
+        +getById(orderId) : Order
+        +findByUser(GId) : List~Order~
+        +create(orderData) : Order
+        +updateStatus(orderId, status) : boolean
+    }
+    
+    class Database {
+        <<Storage>>
+        +OrdersTable
+        +OrderItemsTable
+    }
+
+    %% Mối quan hệ: Service sử dụng Repository
+    OrderService "1" --o "1" OrderRepository : "Sử dụng (Uses)"
+    
+    %% Mối quan hệ: Repository truy cập Database
+    OrderRepository ..> Database : "Truy vấn (Queries)"

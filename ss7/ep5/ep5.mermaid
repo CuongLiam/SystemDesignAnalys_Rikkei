@@ -1,0 +1,63 @@
+graph TD
+    direction TB
+    
+    subgraph "1. Presentation Tier (Tầng Giao diện)"
+        UI["<b>Blog UI</b>
+        (HTML/CSS/React/Vue)
+        - Trang chủ (Đọc bài)
+        - Trang chi tiết bài viết
+        - Trang quản trị (Viết bài)
+        - Form đăng nhập/đăng ký"]
+    end
+
+    subgraph "2. Business Logic Tier (Tầng Nghiệp vụ)"
+        direction TB
+        subgraph "Services (Xử lý Logic)"
+            UserService["<b>UserService</b>
+            - Đăng ký (Kiểm tra username tồn tại)
+            - Đăng nhập (Xác thực mật khẩu)
+            - Phân quyền"]
+            PostService["<b>PostService</b>
+            - Tạo/Sửa bài (Kiểm tra quyền tác giả)
+            - Đăng bài (Cập nhật trạng thái)"]
+            CommentService["<b>CommentService</b>
+            - Thêm bình luận (Kiểm tra nội dung)
+            - Xóa bình luận (Kiểm tra quyền admin/chủ)"]
+        end
+    end
+    
+    subgraph "3. Data Access Tier (Tầng Truy cập Dữ liệu)"
+        direction TB
+        subgraph "Repositories (Truy cập CSDL)"
+            UserRepo["<b>UserRepository</b>
+            - findUserByUsername()
+            - createUser()"]
+            PostRepo["<b>PostRepository</b>
+            - getPostById()
+            - getAllPosts()
+            - createPost()
+            - updatePost()"]
+            CommentRepo["<b>CommentRepository</b>
+            - getCommentsByPostId()
+            - createComment()
+            - deleteComment()"]
+        end
+    end
+    
+    subgraph "Database"
+         DB[("<b>BlogDB</b>
+         (Bảng Users, Posts, Comments)")]
+    end
+
+    %% Dependencies (Luồng phụ thuộc một chiều)
+    UI -- "Gọi" --> UserService
+    UI -- "Gọi" --> PostService
+    UI -- "Gọi" --> CommentService
+
+    UserService -- "Sử dụng" --> UserRepo
+    PostService -- "Sử dụng" --> PostRepo
+    CommentService -- "Sử dụng" --> CommentRepo
+
+    UserRepo -- "SQL Query" --> DB
+    PostRepo -- "SQL Query" --> DB
+    CommentRepo -- "SQL Query" --> DB
