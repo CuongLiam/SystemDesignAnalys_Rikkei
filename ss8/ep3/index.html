@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Lọc Sản Phẩm</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-color-dark: #0056b3;
+            --secondary-color: #e9ecef;
+            --secondary-color-dark: #d3d9df;
+            --text-color: #333;
+            --border-color: #ddd;
+            --background-color: #f8f9fa;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 1rem;
+        }
+
+        /* Bố cục tổng thể (Mobile-First) */
+        .page-container {
+            display: flex;
+            flex-direction: column; /* Xếp chồng trên mobile */
+            gap: 1.5rem;
+        }
+
+        /* --- 1. Sidebar Bộ Lọc --- */
+        .filter-sidebar {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .filter-sidebar h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Select box (Danh mục & Sắp xếp) */
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--white);
+            cursor: pointer;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        /* Price Input (Từ - Đến) */
+        .price-inputs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .price-inputs input[type="number"] {
+            width: 100%; /* Chia đôi không gian */
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            /* Tắt mũi tên tăng giảm của input number */
+            -moz-appearance: textfield;
+        }
+        .price-inputs input[type="number"]::-webkit-outer-spin-button,
+        .price-inputs input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .price-inputs span {
+            color: #888;
+        }
+
+        /* Nút Lọc & Xóa */
+        .filter-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        /* Nút chính (CTA) */
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-color-dark);
+        }
+
+        /* Nút phụ (Xóa) */
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        .btn-secondary:hover {
+            background-color: var(--secondary-color-dark);
+        }
+
+
+        /* --- 2. Main Content (Sắp xếp & Sản phẩm) --- */
+        .product-main {
+            width: 100%;
+        }
+
+        .sort-container {
+            display: flex;
+            justify-content: flex-end; /* Đẩy sang phải */
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .sort-container label {
+            font-weight: 600;
+        }
+        .sort-container .filter-select {
+            width: auto; /* Tự động co dãn theo nội dung */
+            min-width: 180px;
+        }
+        
+        .product-grid-placeholder {
+            /* Đây là nơi hiển thị sản phẩm */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 400px; /* Chiều cao tối thiểu để demo */
+            align-content: flex-start;
+        }
+        /* Demo sản phẩm */
+        .product-item-demo {
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        .product-item-demo .img-placeholder {
+            width: 100%;
+            height: 120px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+
+
+        /* --- Responsive: Desktop (≥1024px) --- */
+        @media (min-width: 1024px) {
+            .page-container {
+                flex-direction: row; /* Chuyển sang layout hàng ngang */
+                align-items: flex-start; /* Giữ cho 2 cột align ở trên cùng */
+            }
+            .filter-sidebar {
+                width: 280px; /* Cố định độ rộng sidebar */
+                flex-shrink: 0; /* Không bị co lại */
+                position: sticky; /* Dính lại khi cuộn */
+                top: 1rem;
+            }
+            .product-main {
+                flex-grow: 1; /* Chiếm hết phần không gian còn lại */
+            }
+            .product-grid-placeholder {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+
+        <aside class="filter-sidebar">
+            <form>
+                <h2>Bộ lọc 🧩</h2>
+
+                <div class="filter-group">
+                    <label for="category">Danh mục</label>
+                    <select id="category" class="filter-select">
+                        <option value="">Tất cả danh mục</option>
+                        <option value="quan-ao">Quần áo</option>
+                        <option value="dien-tu">Điện tử</option>
+                        <option value="sach">Sách</option>
+                        <option value="gia-dung">Gia dụng</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Khoảng giá (VNĐ)</label>
+                    <div class="price-inputs">
+                        <input type="number" placeholder="Từ giá" min="0">
+                        <span>-</span>
+                        <input type="number" placeholder="Đến giá" min="0">
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">ÁP DỤNG LỌC</button>
+                    <button type="reset" class="btn btn-secondary">Xóa lọc ❌</button>
+                </div>
+            </form>
+        </aside>
+
+        <main class="product-main">
+
+            <div class="sort-container">
+                <label for="sort-by">Sắp xếp theo:</label>
+                <select id="sort-by" class="filter-select">
+                    <option value="newest">Mới nhất</option>
+                    <option value="best-selling">Bán chạy nhất</option>
+                    <option value="price-asc">Giá tăng dần</option>
+                    <option value="price-desc">Giá giảm dần</option>
+                </select>
+            </div>
+
+            <div class="product-grid-placeholder">
+                <div class="product-item-demo"><div class="img-placeholder">[Image]</div><p>Sản phẩm 1</p></div>
+                <div class="product-item-demo"><div class="img-placeholder">[Image]</div><p>Sản phẩm 2</p></div>
+                <div class="product-item-demo"><div class="img-placeholder">[Image]</div><p>Sản phẩm 3</p></div>
+                <div class="product-item-demo"><div class="img-placeholder">[Image]</div><p>Sản phẩm 4</p></div>
+                <div class="product-item-demo"><div class="img-placeholder">[Image]</div><p>Sản phẩm 5</p></div>
+                <div class="product-item-demo"><div class="img-placeholder">[Image]</div><p>Sản phẩm 6</p></div>
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

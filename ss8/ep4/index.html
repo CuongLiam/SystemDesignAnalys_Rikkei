@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Đơn Hàng</title>
+    <style>
+        /* --- Cài đặt chung --- */
+        :root {
+            --primary-color: #007bff;
+            --success-bg: #e0f0ff; /* Light Blue */
+            --success-text: #0056b3; /* Dark Blue */
+            --warning-bg: #fffbe0;  /* Light Yellow */
+            --warning-text: #8a6d00;  /* Dark Yellow */
+            --danger-bg: #ffe0e0;   /* Light Red */
+            --danger-text: #b30000;   /* Dark Red */
+            --table-border: #dee2e6;
+            --table-header-bg: #f8f9fa;
+            --background-color: #f4f7f6;
+            --white: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        /* --- Container cho bảng --- */
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            /* overflow-x: auto để responsive trên mobile */
+            overflow-x: auto; 
+        }
+
+        h1 {
+            padding: 1.5rem 2rem 0;
+            margin: 0;
+        }
+
+        /* --- Bảng dữ liệu --- */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse; /* Gộp đường viền */
+            margin-top: 1.5rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem 1.5rem; /* Tăng padding cho dễ đọc */
+            border-bottom: 1px solid var(--table-border);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        /* Tiêu đề bảng */
+        .data-table thead th {
+            background-color: var(--table-header-bg);
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* Căn lề các cột đặc biệt */
+        .data-table th:first-child, /* STT */
+        .data-table td:first-child {
+            text-align: center;
+            width: 5%;
+        }
+
+        .data-table th:last-child, /* Hành động */
+        .data-table td:last-child {
+            text-align: center;
+            width: 10%;
+        }
+
+        /* --- Styling Trạng Thái (Yêu cầu chính) --- */
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 12px; /* Dạng con nhộng */
+            white-space: nowrap;
+        }
+
+        .status-completed {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .status-processing {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .status-cancelled {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        /* --- Nút Chi Tiết --- */
+        .btn-details {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-details:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* --- Phân Trang (Pagination) --- */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--table-border);
+        }
+
+        .pagination-container #page-info {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .pagination-container .pagination-nav button {
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid var(--table-border);
+            border-radius: 4px;
+            background-color: var(--white);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .pagination-container .pagination-nav button:hover {
+            background-color: var(--table-header-bg);
+        }
+
+        .pagination-container .pagination-nav button:disabled {
+            background-color: #f9f9f9;
+            color: #ccc;
+            cursor: not-allowed;
+            border-color: #eee;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="table-container">
+        <h1>Danh Sách Đơn Hàng</h1>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã đơn</th>
+                    <th>Tên khách</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="order-table-body"></tbody>
+        </table>
+
+        <div class="pagination-container">
+            <span id="page-info">Đang tải...</span>
+            <div class="pagination-nav">
+                <button id="prev-page" disabled>Trang trước</button>
+                <button id="next-page" disabled>Trang sau</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DỮ LIỆU GIẢ (MOCK DATA) ---
+        // Trong thực tế, bạn sẽ nhận dữ liệu này từ API
+        const allOrders = [
+            { id: "DH-001", customer: "Nguyễn Văn A", status: "Hoàn thành" },
+            { id: "DH-002", customer: "Trần Thị B", status: "Đang xử lý" },
+            { id: "DH-003", customer: "Lê Văn C", status: "Hủy" },
+            { id: "DH-004", customer: "Phạm Thị D", status: "Hoàn thành" },
+            { id: "DH-005", customer: "Hoàng Văn E", status: "Hoàn thành" },
+            { id: "DH-006", customer: "Vũ Thị F", status: "Đang xử lý" },
+            { id: "DH-007", customer: "Đặng Văn G", status: "Hoàn thành" },
+            { id: "DH-008", customer: "Bùi Thị H", status: "Hủy" },
+            { id: "DH-009", customer: "Hồ Văn I", status: "Đang xử lý" },
+            { id: "DH-010", customer: "Ngô Thị K", status: "Hoàn thành" },
+            { id: "DH-011", customer: "Dương Văn L", status: "Đang xử lý" },
+            { id: "DH-012", customer: "Lý Thị M", status: "Hoàn thành" },
+            { id: "DH-013", customer: "Trịnh Văn N", status: "Hủy" },
+            { id: "DH-014", customer: "Mai Thị P", status: "Hoàn thành" },
+            { id: "DH-015", customer: "Phan Văn Q", status: "Đang xử lý" },
+            { id: "DH-016", customer: "Đoàn Thị R", status: "Hoàn thành" },
+            { id: "DH-017", customer: "Lâm Văn S", status: "Đang xử lý" },
+            { id: "DH-018", customer: "Tạ Thị T", status: "Hoàn thành" },
+            { id: "DH-019", customer: "Tô Văn U", status: "Hủy" },
+            { id: "DH-020", customer: "Chu Thị V", status: "Hoàn thành" },
+            { id: "DH-021", customer: "Vương Văn X", status: "Đang xử lý" },
+        ];
+
+        // --- 2. BIẾN TOÀN CỤC VÀ CÀI ĐẶT PHÂN TRANG ---
+        let currentPage = 1;
+        const rowsPerPage = 10; // Yêu cầu: 10 đơn hàng mỗi trang
+
+        // --- 3. LẤY CÁC PHẦN TỬ DOM ---
+        const tableBody = document.getElementById('order-table-body');
+        const prevButton = document.getElementById('prev-page');
+        const nextButton = document.getElementById('next-page');
+        const pageInfo = document.getElementById('page-info');
+
+        // --- 4. HÀM HIỂN THỊ BẢNG (CORE LOGIC) ---
+        function displayTable(page) {
+            tableBody.innerHTML = ''; // Xóa dữ liệu cũ
+            const startIndex = (page - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const paginatedOrders = allOrders.slice(startIndex, endIndex);
+
+            const totalPages = Math.ceil(allOrders.length / rowsPerPage);
+
+            paginatedOrders.forEach((order, index) => {
+                const row = document.createElement('tr');
+                
+                // Tính STT chính xác dựa trên trang
+                const stt = startIndex + index + 1; 
+
+                // Lấy class CSS cho trạng thái
+                const statusClass = getStatusClass(order.status);
+
+                row.innerHTML = `
+                    <td>${stt}</td>
+                    <td>${order.id}</td>
+                    <td>${order.customer}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${order.status}</span>
+                    </td>
+                    <td>
+                        <button class="btn-details" onclick="viewDetails('${order.id}')">
+                            Chi tiết
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Cập nhật thông tin và trạng thái nút phân trang
+            pageInfo.textContent = `Hiển thị ${startIndex + 1}-${Math.min(endIndex, allOrders.length)} trên ${allOrders.length} đơn hàng (Trang ${currentPage}/${totalPages})`;
+            prevButton.disabled = (currentPage === 1);
+            nextButton.disabled = (currentPage === totalPages);
+        }
+
+        // --- 5. HÀM HỖ TRỢ ---
+
+        // Hàm lấy class CSS dựa trên text trạng thái
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Hoàn thành':
+                    return 'status-completed';
+                case 'Đang xử lý':
+                    return 'status-processing';
+                case 'Hủy':
+                    return 'status-cancelled';
+                default:
+                    return '';
+            }
+        }
+
+        // Hàm (giả) khi bấm nút "Chi tiết"
+        function viewDetails(orderId) {
+            alert(`Bạn đang xem chi tiết đơn hàng: ${orderId}`);
+        }
+
+        // --- 6. GÁN SỰ KIỆN CHO NÚT PHÂN TRANG ---
+
+        prevButton.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTable(currentPage);
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            const totalPages = Math.ceil(allOrders.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayTable(currentPage);
+            }
+        });
+
+        // --- 7. TẢI DỮ LIỆU LẦN ĐẦU KHI MỞ TRANG ---
+        document.addEventListener('DOMContentLoaded', () => {
+            displayTable(currentPage);
+        });
+
+    </script>
+</body>
+</html>

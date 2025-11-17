@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Tài Khoản</title>
+    <style>
+        /* --- Cài đặt chung --- */
+        :root {
+            --primary-color: #007bff;
+            --primary-color-dark: #0056b3;
+            --error-color: #dc3545; /* Màu đỏ cho lỗi */
+            --success-color: #28a745;
+            --input-border: #cccccc;
+            --background-color: #f4f7f6;
+            --form-background: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- Form Container --- */
+        .register-container {
+            background-color: var(--form-background);
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .register-container h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        /* --- Form Group (Một nhóm gồm Label, Input, Error) --- */
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative; /* Cần thiết cho một số styling */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box; /* Quan trọng! */
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        /* --- Xử lý hiển thị lỗi (Yêu cầu chính) --- */
+        .form-group .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none; /* Mặc định ẩn đi */
+        }
+
+        /* Khi một form-group có lỗi */
+        .form-group.has-error input,
+        .form-group.has-error select {
+            border-color: var(--error-color); /* Đổi viền input sang đỏ */
+        }
+
+        .form-group.has-error .error-message {
+            display: block; /* Hiện thông báo lỗi */
+        }
+
+        /* --- Xử lý Input Tải Lên Ảnh Đại Diện --- */
+        /* Ẩn input[type="file"] mặc định xấu xí */
+        .form-group input[type="file"] {
+            display: none;
+        }
+
+        /* Tạo một "nút" giả bằng label */
+        .file-upload-label {
+            display: inline-block;
+            padding: 0.75rem 1.25rem;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .file-upload-label:hover {
+            background-color: #d3d9df;
+        }
+        /* Tên file được chọn */
+        #file-name {
+            margin-left: 1rem;
+            font-style: italic;
+            color: #555;
+            font-size: 0.875rem;
+        }
+
+        /* --- Nút Đăng Ký (CTA) --- */
+        .register-button {
+            width: 100%;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .register-button:hover {
+            background-color: var(--primary-color-dark);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <h1>Tạo Tài Khoản</h1>
+
+        <form id="register-form" novalidate>
+
+            <div class="form-group">
+                <label for="fullname">Họ và Tên</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Ví dụ: Nguyễn Văn An">
+                <span class="error-message" id="fullname-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="example@example.com">
+                <span class="error-message" id="email-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" placeholder="Tối thiểu 8 ký tự, 1 ký tự đặc biệt">
+                <span class="error-message" id="password-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Giới tính</label>
+                <select id="gender" name="gender">
+                    <option value="">-- Chọn giới tính --</option>
+                    <option value="nam">Nam</option>
+                    <option value="nu">Nữ</option>
+                    <option value="khac">Khác</option>
+                </select>
+                <span class="error-message" id="gender-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="avatar">Ảnh đại diện</label>
+                <label for="avatar" class="file-upload-label">Chọn ảnh...</label>
+                <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg">
+                <span id="file-name">Chưa chọn file nào</span>
+                <span class="error-message" id="avatar-error"></span>
+            </div>
+
+            <button type="submit" class="register-button">Đăng Ký 🚀</button>
+
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Lấy các phần tử DOM ---
+            const form = document.getElementById('register-form');
+            const fullname = document.getElementById('fullname');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const gender = document.getElementById('gender');
+            const avatar = document.getElementById('avatar');
+            const fileNameSpan = document.getElementById('file-name');
+
+            // --- Xử lý tên file ảnh đại diện ---
+            avatar.addEventListener('change', () => {
+                if (avatar.files.length > 0) {
+                    fileNameSpan.textContent = avatar.files[0].name;
+                } else {
+                    fileNameSpan.textContent = 'Chưa chọn file nào';
+                }
+            });
+
+            // --- Gán sự kiện Submit cho Form ---
+            form.addEventListener('submit', (event) => {
+                // Ngăn form gửi đi theo cách truyền thống
+                event.preventDefault(); 
+                
+                // Gọi hàm validate
+                if (validateForm()) {
+                    // Nếu validate thành công
+                    alert('Đăng ký thành công!');
+                    form.reset(); // Xóa các trường trong form
+                    fileNameSpan.textContent = 'Chưa chọn file nào';
+                }
+            });
+
+            // --- HÀM VALIDATE TỔNG ---
+            function validateForm() {
+                let isValid = true; // Cờ (flag) để theo dõi lỗi
+
+                // 1. Xóa hết các lỗi cũ trước khi kiểm tra
+                clearErrors();
+
+                // 2. Kiểm tra Họ tên (không được rỗng)
+                if (fullname.value.trim() === '') {
+                    showError('fullname', 'Vui lòng nhập họ và tên.');
+                    isValid = false;
+                }
+
+                // 3. Kiểm tra Email (không rỗng + định dạng)
+                if (email.value.trim() === '') {
+                    showError('email', 'Vui lòng nhập email.');
+                    isValid = false;
+                } else if (!isValidEmail(email.value.trim())) {
+                    showError('email', 'Email không đúng định dạng.');
+                    isValid = false;
+                }
+
+                // 4. Kiểm tra Mật khẩu (tối thiểu 8 ký tự, có ký tự đặc biệt)
+                const passValue = password.value;
+                if (passValue.length < 8) {
+                    showError('password', 'Mật khẩu phải có ít nhất 8 ký tự.');
+                    isValid = false;
+                } else if (!hasSpecialCharacter(passValue)) {
+                    showError('password', 'Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt.');
+                    isValid = false;
+                }
+
+                // 5. Kiểm tra Giới tính (phải chọn 1)
+                if (gender.value === '') {
+                    showError('gender', 'Vui lòng chọn giới tính.');
+                    isValid = false;
+                }
+
+                // 6. Kiểm tra Ảnh đại diện (phải tải lên)
+                if (avatar.files.length === 0) {
+                    showError('avatar', 'Vui lòng tải lên ảnh đại diện.');
+                    isValid = false;
+                } else {
+                    // Kiểm tra định dạng file
+                    const allowedTypes = ['image/png', 'image/jpeg'];
+                    if (!allowedTypes.includes(avatar.files[0].type)) {
+                        showError('avatar', 'Chỉ chấp nhận file định dạng PNG hoặc JPG.');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            // --- HÀM HỖ TRỢ (HELPER FUNCTIONS) ---
+
+            /**
+             * Hiển thị lỗi cho một trường cụ thể
+             * @param {string} fieldId - ID của input (ví dụ: 'fullname')
+             * @param {string} message - Thông báo lỗi
+             */
+            function showError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                const errorSpan = document.getElementById(`${fieldId}-error`);
+                
+                // Thêm class has-error vào .form-group cha
+                field.closest('.form-group').classList.add('has-error');
+                // Hiển thị nội dung lỗi
+                errorSpan.textContent = message;
+            }
+
+            /**
+             * Xóa tất cả các lỗi trên form
+             */
+            function clearErrors() {
+                const errorGroups = document.querySelectorAll('.form-group.has-error');
+                errorGroups.forEach(group => {
+                    group.classList.remove('has-error');
+                });
+
+                const errorMessages = document.querySelectorAll('.error-message');
+                errorMessages.forEach(msg => {
+                    msg.textContent = '';
+                });
+            }
+
+            /**
+             * Kiểm tra định dạng email bằng Regex
+             * @param {string} email
+             */
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(String(email).toLowerCase());
+            }
+
+            /**
+             * Kiểm tra ký tự đặc biệt bằng Regex
+             * @param {string} password
+             */
+            function hasSpecialCharacter(password) {
+                const re = /[!@#$%^&*(),.?":{}|<>]/;
+                return re.test(password);
+            }
+
+        });
+    </script>
+
+</body>
+</html>
