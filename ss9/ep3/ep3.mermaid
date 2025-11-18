@@ -1,0 +1,16 @@
+erDiagram
+    CUSTOMER ||--o{ ORDER : "đặt"
+    
+    CUSTOMER {
+        int Customer_ID PK "Khóa chính: Mã khách hàng"
+        string Ten "Tên khách hàng"
+        string Dia_chi "Địa chỉ"
+    }
+
+    ORDER {
+        int Order_ID PK "Khóa chính: Mã đơn hàng"
+        date Ngay_dat "Ngày đặt hàng"
+        string Trang_thai "Trạng thái đơn hàng"
+        float Tong_gia_tri "Tổng tiền"
+        int Customer_ID FK "Khóa ngoại: Liên kết với Khách hàng"
+    }

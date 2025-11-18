@@ -1,0 +1,31 @@
+erDiagram
+    SINH_VIEN ||--|| THE_SINH_VIEN : "sở hữu"
+    SINH_VIEN {
+        string Ten
+    }
+    THE_SINH_VIEN {
+        string Ma_so_duy_nhat
+    }
+
+
+erDiagram
+    KHACH_HANG ||--o{ DON_HANG : "đặt"
+    KHACH_HANG {
+        int ID
+        string Ten
+    }
+    DON_HANG {
+        int ID
+        int ID_KhachHangFK
+    }
+
+
+erDiagram
+    SINH_VIEN ||--o{ KET_QUA_HOC_TAP : "có"
+    MON_HOC ||--o{ KET_QUA_HOC_TAP : "được học trong"
+
+    KET_QUA_HOC_TAP {
+        int ID_SinhVien FK
+        int ID_MonHoc FK
+        float Diem_so
+    }

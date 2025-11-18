@@ -1,0 +1,38 @@
+erDiagram
+    %% Quan hệ giữa User và Post (Một tác giả viết nhiều bài)
+    USER ||--o{ POST : "viết (author)"
+    
+    %% Quan hệ giữa Category và Post (Một danh mục chứa nhiều bài)
+    CATEGORY ||--o{ POST : "chứa"
+    
+    %% Quan hệ giữa User và Comment (Một người viết nhiều bình luận)
+    USER ||--o{ COMMENT : "viết"
+    
+    %% Quan hệ giữa Post và Comment (Một bài có nhiều bình luận)
+    POST ||--o{ COMMENT : "có"
+
+    USER {
+        int user_id PK
+        string username
+        string email
+    }
+
+    CATEGORY {
+        int category_id PK
+        string name
+    }
+
+    POST {
+        int post_id PK
+        string title
+        text content
+        int user_id FK "Khóa ngoại: Liên kết User"
+        int category_id FK "Khóa ngoại: Liên kết Category"
+    }
+
+    COMMENT {
+        int comment_id PK
+        text content
+        int post_id FK "Khóa ngoại: Liên kết Post"
+        int user_id FK "Khóa ngoại: Liên kết User"
+    }
